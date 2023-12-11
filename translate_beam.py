@@ -63,6 +63,11 @@ def get_args():
         "--alpha", default=0.0, type=float, help="alpha for softer length normalization"
     )
 
+    # add option to specify lambda_
+    parser.add_argument(
+        "--lambda_", default=0.0, type=float, help="lambda for squared regularization"
+    )
+
     return parser.parse_args()
 
 
@@ -248,6 +253,9 @@ def main(args):
                     # Get parent node and beam search object for corresponding sentence
                     node = nodes[i]
                     search = node.search
+
+                    # implement squared regularization
+                    log_p = log_p - args.lambda_ * torch.sum(node.logp ** 2)
 
                     # __QUESTION 4: How are "add" and "add_final" different?
                     # What would happen if we did not make this distinction?
